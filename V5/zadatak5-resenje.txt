@@ -1,0 +1,68 @@
+---------- void tip -----------
+
+u skeneru dodati pravilo za void kljucnu rec (slicno kao "int" i "unsigned"):
+"void"    { yylval.i = VOID; return _TYPE; }
+
+Konstantu VOID koja sluzi kao vrednost simbola, definisati (dodati) u enumeraciji types u fajlu defs.h:
+enum types { NO_TYPE, INT, UINT, VOID };
+
+Ako se desi situacija da je promenljiva tipa VOID,
+treba ispisati (semanticku) gresku:
+variable
+  : type _ID _SEMICOLON
+      { ...
+        if($1 == VOID)
+          err("variable cannot be of VOID type");
+      }
+  ;
+
+i slično za pravilo parameter (ne sme biti VOID)
+parameter
+  : { ...
+      if($1 == VOID)
+        err("variable cannot be of VOID type");
+  }
+
+---------- return ; -----------
+U prvom delu .y specifikacije definisati promenljivu koja broji koliko je u parsiranoj funkciji bilo return iskaza.
+%{
+int return_count = 0;
+%}
+
+Svaki put kada se isparsira neka varijanta return iskaza, inkrementira se retrun_count.   
+Ako je povratni tip funkcije VOID, onda se iz nje ne sme vracati vrednost (err).
+Ako je funkcija non-VOID, onda treba da vrati vrednost - ako postoji samo "return ;" treba prijaviti warning.  
+return_statement
+  : _RETURN num_exp _SEMICOLON
+      {
+        if(get_type(fun_idx) == VOID)
+            err("Function cannot return value");
+        else 
+          if(get_type(fun_idx) != get_type($2))
+            err("incompatible types in return");
+        return_count++;
+      }
+
+    |   _RETURN _SEMICOLON
+      {
+        if(get_type(fun_idx) != VOID)
+            warn("Function should return a value");
+        return_count++;
+      }
+  ;
+
+Na kraju funkcije, ako je return_count na 0, znaci da u parsiranoj funkciji nije bilo return iskaza.
+function
+  : type _ID 
+      {
+        ...
+      }
+    _LPAREN parameter _RPAREN body
+      {  
+        ...
+
+        if( (return_count == 0) && (get_type(fun_idx) != VOID) )
+          warn("Function should return a value");
+        return_count = 0;
+      }
+  ;

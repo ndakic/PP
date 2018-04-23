@@ -1,0 +1,1390 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: function_list
+
+    2 function_list: function
+    3              | function_list function
+
+    4 $@1: %empty
+
+    5 function: type _ID $@1 _LPAREN parameter _RPAREN body
+
+    6 type: _TYPE
+
+    7 parameter: %empty
+    8          | type _ID
+
+    9 body: _LBRACKET variable_list statement_list _RBRACKET
+
+   10 variable_list: %empty
+   11              | variable_list variable
+
+   12 variable: vars _SEMICOLON
+
+   13 $@2: %empty
+
+   14 vars: type $@2 _ID
+   15     | vars _COMMA _ID
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID _RELOP literal _RPAREN _SEMICOLON
+
+   17 inc_statement: _ID _INC _SEMICOLON
+
+   18 $@3: %empty
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+   20 default_statement: %empty
+   21                  | _DEFAULT _COLON case_body
+
+   22 break_statement: %empty
+   23                | _BREAK _SEMICOLON
+
+   24 case_list: case_
+   25          | case_list case_
+
+   26 $@4: %empty
+
+   27 case_: _CASE literal $@4 _COLON case_body break_statement
+
+   28 case_body: compound_statement
+   29          | assignment_statement
+
+   30 $@5: %empty
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN _LBRACKET case_list default_statement _RBRACKET
+
+   32 statement_list: %empty
+   33               | statement_list statement
+
+   34 statement: compound_statement
+   35          | assignment_statement
+   36          | if_statement
+   37          | return_statement
+   38          | inc_statement
+   39          | do_statement
+   40          | for_statement
+   41          | switch_statement
+
+   42 $@6: %empty
+
+   43 compound_statement: _LBRACKET $@6 variable_list statement_list _RBRACKET
+
+   44 assignment_statement: _ID _ASSIGN num_exp _SEMICOLON
+
+   45 num_exp: exp
+   46        | num_exp _AROP exp
+
+   47 exp: literal
+   48    | _ID
+   49    | function_call
+   50    | _LPAREN num_exp _RPAREN
+
+   51 literal: _INT_NUMBER
+   52        | _UINT_NUMBER
+
+   53 $@7: %empty
+
+   54 function_call: _ID $@7 _LPAREN argument _RPAREN
+
+   55 argument: %empty
+   56         | num_exp
+
+   57 if_statement: if_part
+   58             | if_part _ELSE statement
+
+   59 if_part: _IF _LPAREN rel_exp _RPAREN statement
+
+   60 rel_exp: num_exp _RELOP num_exp
+
+   61 return_statement: _RETURN num_exp _SEMICOLON
+   62                 | _RETURN _SEMICOLON
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+_TYPE (258) 6 19
+_IF (259) 59
+_ELSE (260) 58
+_RETURN (261) 61 62
+_ID (262) 5 8 14 15 16 17 19 31 44 48 54
+_INT_NUMBER (263) 51
+_UINT_NUMBER (264) 52
+_LPAREN (265) 5 16 19 31 50 54 59
+_RPAREN (266) 5 16 19 31 50 54 59
+_LBRACKET (267) 9 31 43
+_RBRACKET (268) 9 31 43
+_ASSIGN (269) 19 44
+_SEMICOLON (270) 12 16 17 19 23 44 61 62
+_AROP (271) 46
+_RELOP (272) 16 60
+_COMMA (273) 15
+_INC (274) 17 19
+_DO (275) 16
+_WHILE (276) 16
+_FOR (277) 19
+_SWITCH (278) 31
+_CASE (279) 27
+_DEFAULT (280) 21
+_COLON (281) 21 27
+_BREAK (282) 23
+ONLY_IF (283)
+
+
+Nonterminals, with rules where they appear
+
+$accept (29)
+    on left: 0
+program (30)
+    on left: 1, on right: 0
+function_list (31)
+    on left: 2 3, on right: 1 3
+function (32)
+    on left: 5, on right: 2 3
+$@1 (33)
+    on left: 4, on right: 5
+type (34)
+    on left: 6, on right: 5 8 14
+parameter (35)
+    on left: 7 8, on right: 5
+body (36)
+    on left: 9, on right: 5
+variable_list (37)
+    on left: 10 11, on right: 9 11 43
+variable (38)
+    on left: 12, on right: 11
+vars (39)
+    on left: 14 15, on right: 12 15
+$@2 (40)
+    on left: 13, on right: 14
+do_statement (41)
+    on left: 16, on right: 39
+inc_statement (42)
+    on left: 17, on right: 38
+for_statement (43)
+    on left: 19, on right: 40
+$@3 (44)
+    on left: 18, on right: 19
+default_statement (45)
+    on left: 20 21, on right: 31
+break_statement (46)
+    on left: 22 23, on right: 27
+case_list (47)
+    on left: 24 25, on right: 25 31
+case_ (48)
+    on left: 27, on right: 24 25
+$@4 (49)
+    on left: 26, on right: 27
+case_body (50)
+    on left: 28 29, on right: 21 27
+switch_statement (51)
+    on left: 31, on right: 41
+$@5 (52)
+    on left: 30, on right: 31
+statement_list (53)
+    on left: 32 33, on right: 9 33 43
+statement (54)
+    on left: 34 35 36 37 38 39 40 41, on right: 16 19 33 58 59
+compound_statement (55)
+    on left: 43, on right: 28 34
+$@6 (56)
+    on left: 42, on right: 43
+assignment_statement (57)
+    on left: 44, on right: 29 35
+num_exp (58)
+    on left: 45 46, on right: 44 46 50 56 60 61
+exp (59)
+    on left: 47 48 49 50, on right: 45 46
+literal (60)
+    on left: 51 52, on right: 16 19 27 47
+function_call (61)
+    on left: 54, on right: 49
+$@7 (62)
+    on left: 53, on right: 54
+argument (63)
+    on left: 55 56, on right: 54
+if_statement (64)
+    on left: 57 58, on right: 36
+if_part (65)
+    on left: 59, on right: 57 58
+rel_exp (66)
+    on left: 60, on right: 19 59
+return_statement (67)
+    on left: 61 62, on right: 37
+
+
+State 0
+
+    0 $accept: . program $end
+
+    _TYPE  shift, and go to state 1
+
+    program        go to state 2
+    function_list  go to state 3
+    function       go to state 4
+    type           go to state 5
+
+
+State 1
+
+    6 type: _TYPE .
+
+    $default  reduce using rule 6 (type)
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 program: function_list .
+    3 function_list: function_list . function
+
+    _TYPE  shift, and go to state 1
+
+    $default  reduce using rule 1 (program)
+
+    function  go to state 7
+    type      go to state 5
+
+
+State 4
+
+    2 function_list: function .
+
+    $default  reduce using rule 2 (function_list)
+
+
+State 5
+
+    5 function: type . _ID $@1 _LPAREN parameter _RPAREN body
+
+    _ID  shift, and go to state 8
+
+
+State 6
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 7
+
+    3 function_list: function_list function .
+
+    $default  reduce using rule 3 (function_list)
+
+
+State 8
+
+    5 function: type _ID . $@1 _LPAREN parameter _RPAREN body
+
+    $default  reduce using rule 4 ($@1)
+
+    $@1  go to state 9
+
+
+State 9
+
+    5 function: type _ID $@1 . _LPAREN parameter _RPAREN body
+
+    _LPAREN  shift, and go to state 10
+
+
+State 10
+
+    5 function: type _ID $@1 _LPAREN . parameter _RPAREN body
+
+    _TYPE  shift, and go to state 1
+
+    $default  reduce using rule 7 (parameter)
+
+    type       go to state 11
+    parameter  go to state 12
+
+
+State 11
+
+    8 parameter: type . _ID
+
+    _ID  shift, and go to state 13
+
+
+State 12
+
+    5 function: type _ID $@1 _LPAREN parameter . _RPAREN body
+
+    _RPAREN  shift, and go to state 14
+
+
+State 13
+
+    8 parameter: type _ID .
+
+    $default  reduce using rule 8 (parameter)
+
+
+State 14
+
+    5 function: type _ID $@1 _LPAREN parameter _RPAREN . body
+
+    _LBRACKET  shift, and go to state 15
+
+    body  go to state 16
+
+
+State 15
+
+    9 body: _LBRACKET . variable_list statement_list _RBRACKET
+
+    $default  reduce using rule 10 (variable_list)
+
+    variable_list  go to state 17
+
+
+State 16
+
+    5 function: type _ID $@1 _LPAREN parameter _RPAREN body .
+
+    $default  reduce using rule 5 (function)
+
+
+State 17
+
+    9 body: _LBRACKET variable_list . statement_list _RBRACKET
+   11 variable_list: variable_list . variable
+
+    _TYPE  shift, and go to state 1
+
+    $default  reduce using rule 32 (statement_list)
+
+    type            go to state 18
+    variable        go to state 19
+    vars            go to state 20
+    statement_list  go to state 21
+
+
+State 18
+
+   14 vars: type . $@2 _ID
+
+    $default  reduce using rule 13 ($@2)
+
+    $@2  go to state 22
+
+
+State 19
+
+   11 variable_list: variable_list variable .
+
+    $default  reduce using rule 11 (variable_list)
+
+
+State 20
+
+   12 variable: vars . _SEMICOLON
+   15 vars: vars . _COMMA _ID
+
+    _SEMICOLON  shift, and go to state 23
+    _COMMA      shift, and go to state 24
+
+
+State 21
+
+    9 body: _LBRACKET variable_list statement_list . _RBRACKET
+   33 statement_list: statement_list . statement
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _RBRACKET  shift, and go to state 29
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 37
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 22
+
+   14 vars: type $@2 . _ID
+
+    _ID  shift, and go to state 43
+
+
+State 23
+
+   12 variable: vars _SEMICOLON .
+
+    $default  reduce using rule 12 (variable)
+
+
+State 24
+
+   15 vars: vars _COMMA . _ID
+
+    _ID  shift, and go to state 44
+
+
+State 25
+
+   59 if_part: _IF . _LPAREN rel_exp _RPAREN statement
+
+    _LPAREN  shift, and go to state 45
+
+
+State 26
+
+   61 return_statement: _RETURN . num_exp _SEMICOLON
+   62                 | _RETURN . _SEMICOLON
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+    _SEMICOLON    shift, and go to state 50
+
+    num_exp        go to state 51
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+
+
+State 27
+
+   17 inc_statement: _ID . _INC _SEMICOLON
+   44 assignment_statement: _ID . _ASSIGN num_exp _SEMICOLON
+
+    _ASSIGN  shift, and go to state 55
+    _INC     shift, and go to state 56
+
+
+State 28
+
+   43 compound_statement: _LBRACKET . $@6 variable_list statement_list _RBRACKET
+
+    $default  reduce using rule 42 ($@6)
+
+    $@6  go to state 57
+
+
+State 29
+
+    9 body: _LBRACKET variable_list statement_list _RBRACKET .
+
+    $default  reduce using rule 9 (body)
+
+
+State 30
+
+   16 do_statement: _DO . statement _WHILE _LPAREN _ID _RELOP literal _RPAREN _SEMICOLON
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 58
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 31
+
+   19 for_statement: _FOR . _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _LPAREN  shift, and go to state 59
+
+
+State 32
+
+   31 switch_statement: _SWITCH . _LPAREN _ID $@5 _RPAREN _LBRACKET case_list default_statement _RBRACKET
+
+    _LPAREN  shift, and go to state 60
+
+
+State 33
+
+   39 statement: do_statement .
+
+    $default  reduce using rule 39 (statement)
+
+
+State 34
+
+   38 statement: inc_statement .
+
+    $default  reduce using rule 38 (statement)
+
+
+State 35
+
+   40 statement: for_statement .
+
+    $default  reduce using rule 40 (statement)
+
+
+State 36
+
+   41 statement: switch_statement .
+
+    $default  reduce using rule 41 (statement)
+
+
+State 37
+
+   33 statement_list: statement_list statement .
+
+    $default  reduce using rule 33 (statement_list)
+
+
+State 38
+
+   34 statement: compound_statement .
+
+    $default  reduce using rule 34 (statement)
+
+
+State 39
+
+   35 statement: assignment_statement .
+
+    $default  reduce using rule 35 (statement)
+
+
+State 40
+
+   36 statement: if_statement .
+
+    $default  reduce using rule 36 (statement)
+
+
+State 41
+
+   57 if_statement: if_part .
+   58             | if_part . _ELSE statement
+
+    _ELSE  shift, and go to state 61
+
+    $default  reduce using rule 57 (if_statement)
+
+
+State 42
+
+   37 statement: return_statement .
+
+    $default  reduce using rule 37 (statement)
+
+
+State 43
+
+   14 vars: type $@2 _ID .
+
+    $default  reduce using rule 14 (vars)
+
+
+State 44
+
+   15 vars: vars _COMMA _ID .
+
+    $default  reduce using rule 15 (vars)
+
+
+State 45
+
+   59 if_part: _IF _LPAREN . rel_exp _RPAREN statement
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    num_exp        go to state 62
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+    rel_exp        go to state 63
+
+
+State 46
+
+   48 exp: _ID .
+   54 function_call: _ID . $@7 _LPAREN argument _RPAREN
+
+    _LPAREN   reduce using rule 53 ($@7)
+    $default  reduce using rule 48 (exp)
+
+    $@7  go to state 64
+
+
+State 47
+
+   51 literal: _INT_NUMBER .
+
+    $default  reduce using rule 51 (literal)
+
+
+State 48
+
+   52 literal: _UINT_NUMBER .
+
+    $default  reduce using rule 52 (literal)
+
+
+State 49
+
+   50 exp: _LPAREN . num_exp _RPAREN
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    num_exp        go to state 65
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+
+
+State 50
+
+   62 return_statement: _RETURN _SEMICOLON .
+
+    $default  reduce using rule 62 (return_statement)
+
+
+State 51
+
+   46 num_exp: num_exp . _AROP exp
+   61 return_statement: _RETURN num_exp . _SEMICOLON
+
+    _SEMICOLON  shift, and go to state 66
+    _AROP       shift, and go to state 67
+
+
+State 52
+
+   45 num_exp: exp .
+
+    $default  reduce using rule 45 (num_exp)
+
+
+State 53
+
+   47 exp: literal .
+
+    $default  reduce using rule 47 (exp)
+
+
+State 54
+
+   49 exp: function_call .
+
+    $default  reduce using rule 49 (exp)
+
+
+State 55
+
+   44 assignment_statement: _ID _ASSIGN . num_exp _SEMICOLON
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    num_exp        go to state 68
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+
+
+State 56
+
+   17 inc_statement: _ID _INC . _SEMICOLON
+
+    _SEMICOLON  shift, and go to state 69
+
+
+State 57
+
+   43 compound_statement: _LBRACKET $@6 . variable_list statement_list _RBRACKET
+
+    $default  reduce using rule 10 (variable_list)
+
+    variable_list  go to state 70
+
+
+State 58
+
+   16 do_statement: _DO statement . _WHILE _LPAREN _ID _RELOP literal _RPAREN _SEMICOLON
+
+    _WHILE  shift, and go to state 71
+
+
+State 59
+
+   19 for_statement: _FOR _LPAREN . _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _TYPE  shift, and go to state 72
+
+
+State 60
+
+   31 switch_statement: _SWITCH _LPAREN . _ID $@5 _RPAREN _LBRACKET case_list default_statement _RBRACKET
+
+    _ID  shift, and go to state 73
+
+
+State 61
+
+   58 if_statement: if_part _ELSE . statement
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 74
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 62
+
+   46 num_exp: num_exp . _AROP exp
+   60 rel_exp: num_exp . _RELOP num_exp
+
+    _AROP   shift, and go to state 67
+    _RELOP  shift, and go to state 75
+
+
+State 63
+
+   59 if_part: _IF _LPAREN rel_exp . _RPAREN statement
+
+    _RPAREN  shift, and go to state 76
+
+
+State 64
+
+   54 function_call: _ID $@7 . _LPAREN argument _RPAREN
+
+    _LPAREN  shift, and go to state 77
+
+
+State 65
+
+   46 num_exp: num_exp . _AROP exp
+   50 exp: _LPAREN num_exp . _RPAREN
+
+    _RPAREN  shift, and go to state 78
+    _AROP    shift, and go to state 67
+
+
+State 66
+
+   61 return_statement: _RETURN num_exp _SEMICOLON .
+
+    $default  reduce using rule 61 (return_statement)
+
+
+State 67
+
+   46 num_exp: num_exp _AROP . exp
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    exp            go to state 79
+    literal        go to state 53
+    function_call  go to state 54
+
+
+State 68
+
+   44 assignment_statement: _ID _ASSIGN num_exp . _SEMICOLON
+   46 num_exp: num_exp . _AROP exp
+
+    _SEMICOLON  shift, and go to state 80
+    _AROP       shift, and go to state 67
+
+
+State 69
+
+   17 inc_statement: _ID _INC _SEMICOLON .
+
+    $default  reduce using rule 17 (inc_statement)
+
+
+State 70
+
+   11 variable_list: variable_list . variable
+   43 compound_statement: _LBRACKET $@6 variable_list . statement_list _RBRACKET
+
+    _TYPE  shift, and go to state 1
+
+    $default  reduce using rule 32 (statement_list)
+
+    type            go to state 18
+    variable        go to state 19
+    vars            go to state 20
+    statement_list  go to state 81
+
+
+State 71
+
+   16 do_statement: _DO statement _WHILE . _LPAREN _ID _RELOP literal _RPAREN _SEMICOLON
+
+    _LPAREN  shift, and go to state 82
+
+
+State 72
+
+   19 for_statement: _FOR _LPAREN _TYPE . _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _ID  shift, and go to state 83
+
+
+State 73
+
+   31 switch_statement: _SWITCH _LPAREN _ID . $@5 _RPAREN _LBRACKET case_list default_statement _RBRACKET
+
+    $default  reduce using rule 30 ($@5)
+
+    $@5  go to state 84
+
+
+State 74
+
+   58 if_statement: if_part _ELSE statement .
+
+    $default  reduce using rule 58 (if_statement)
+
+
+State 75
+
+   60 rel_exp: num_exp _RELOP . num_exp
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    num_exp        go to state 85
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+
+
+State 76
+
+   59 if_part: _IF _LPAREN rel_exp _RPAREN . statement
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 86
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 77
+
+   54 function_call: _ID $@7 _LPAREN . argument _RPAREN
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    $default  reduce using rule 55 (argument)
+
+    num_exp        go to state 87
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+    argument       go to state 88
+
+
+State 78
+
+   50 exp: _LPAREN num_exp _RPAREN .
+
+    $default  reduce using rule 50 (exp)
+
+
+State 79
+
+   46 num_exp: num_exp _AROP exp .
+
+    $default  reduce using rule 46 (num_exp)
+
+
+State 80
+
+   44 assignment_statement: _ID _ASSIGN num_exp _SEMICOLON .
+
+    $default  reduce using rule 44 (assignment_statement)
+
+
+State 81
+
+   33 statement_list: statement_list . statement
+   43 compound_statement: _LBRACKET $@6 variable_list statement_list . _RBRACKET
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _RBRACKET  shift, and go to state 89
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 37
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 82
+
+   16 do_statement: _DO statement _WHILE _LPAREN . _ID _RELOP literal _RPAREN _SEMICOLON
+
+    _ID  shift, and go to state 90
+
+
+State 83
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID . _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _ASSIGN  shift, and go to state 91
+
+
+State 84
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 . _RPAREN _LBRACKET case_list default_statement _RBRACKET
+
+    _RPAREN  shift, and go to state 92
+
+
+State 85
+
+   46 num_exp: num_exp . _AROP exp
+   60 rel_exp: num_exp _RELOP num_exp .
+
+    _AROP  shift, and go to state 67
+
+    $default  reduce using rule 60 (rel_exp)
+
+
+State 86
+
+   59 if_part: _IF _LPAREN rel_exp _RPAREN statement .
+
+    $default  reduce using rule 59 (if_part)
+
+
+State 87
+
+   46 num_exp: num_exp . _AROP exp
+   56 argument: num_exp .
+
+    _AROP  shift, and go to state 67
+
+    $default  reduce using rule 56 (argument)
+
+
+State 88
+
+   54 function_call: _ID $@7 _LPAREN argument . _RPAREN
+
+    _RPAREN  shift, and go to state 93
+
+
+State 89
+
+   43 compound_statement: _LBRACKET $@6 variable_list statement_list _RBRACKET .
+
+    $default  reduce using rule 43 (compound_statement)
+
+
+State 90
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID . _RELOP literal _RPAREN _SEMICOLON
+
+    _RELOP  shift, and go to state 94
+
+
+State 91
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN . literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+
+    literal  go to state 95
+
+
+State 92
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN . _LBRACKET case_list default_statement _RBRACKET
+
+    _LBRACKET  shift, and go to state 96
+
+
+State 93
+
+   54 function_call: _ID $@7 _LPAREN argument _RPAREN .
+
+    $default  reduce using rule 54 (function_call)
+
+
+State 94
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID _RELOP . literal _RPAREN _SEMICOLON
+
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+
+    literal  go to state 97
+
+
+State 95
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal . _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _SEMICOLON  shift, and go to state 98
+
+
+State 96
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN _LBRACKET . case_list default_statement _RBRACKET
+
+    _CASE  shift, and go to state 99
+
+    case_list  go to state 100
+    case_      go to state 101
+
+
+State 97
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID _RELOP literal . _RPAREN _SEMICOLON
+
+    _RPAREN  shift, and go to state 102
+
+
+State 98
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON . $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    $default  reduce using rule 18 ($@3)
+
+    $@3  go to state 103
+
+
+State 99
+
+   27 case_: _CASE . literal $@4 _COLON case_body break_statement
+
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+
+    literal  go to state 104
+
+
+State 100
+
+   25 case_list: case_list . case_
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN _LBRACKET case_list . default_statement _RBRACKET
+
+    _CASE     shift, and go to state 99
+    _DEFAULT  shift, and go to state 105
+
+    $default  reduce using rule 20 (default_statement)
+
+    default_statement  go to state 106
+    case_              go to state 107
+
+
+State 101
+
+   24 case_list: case_ .
+
+    $default  reduce using rule 24 (case_list)
+
+
+State 102
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID _RELOP literal _RPAREN . _SEMICOLON
+
+    _SEMICOLON  shift, and go to state 108
+
+
+State 103
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 . rel_exp _SEMICOLON _ID _INC _RPAREN statement
+
+    _ID           shift, and go to state 46
+    _INT_NUMBER   shift, and go to state 47
+    _UINT_NUMBER  shift, and go to state 48
+    _LPAREN       shift, and go to state 49
+
+    num_exp        go to state 62
+    exp            go to state 52
+    literal        go to state 53
+    function_call  go to state 54
+    rel_exp        go to state 109
+
+
+State 104
+
+   27 case_: _CASE literal . $@4 _COLON case_body break_statement
+
+    $default  reduce using rule 26 ($@4)
+
+    $@4  go to state 110
+
+
+State 105
+
+   21 default_statement: _DEFAULT . _COLON case_body
+
+    _COLON  shift, and go to state 111
+
+
+State 106
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN _LBRACKET case_list default_statement . _RBRACKET
+
+    _RBRACKET  shift, and go to state 112
+
+
+State 107
+
+   25 case_list: case_list case_ .
+
+    $default  reduce using rule 25 (case_list)
+
+
+State 108
+
+   16 do_statement: _DO statement _WHILE _LPAREN _ID _RELOP literal _RPAREN _SEMICOLON .
+
+    $default  reduce using rule 16 (do_statement)
+
+
+State 109
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp . _SEMICOLON _ID _INC _RPAREN statement
+
+    _SEMICOLON  shift, and go to state 113
+
+
+State 110
+
+   27 case_: _CASE literal $@4 . _COLON case_body break_statement
+
+    _COLON  shift, and go to state 114
+
+
+State 111
+
+   21 default_statement: _DEFAULT _COLON . case_body
+
+    _ID        shift, and go to state 115
+    _LBRACKET  shift, and go to state 28
+
+    case_body             go to state 116
+    compound_statement    go to state 117
+    assignment_statement  go to state 118
+
+
+State 112
+
+   31 switch_statement: _SWITCH _LPAREN _ID $@5 _RPAREN _LBRACKET case_list default_statement _RBRACKET .
+
+    $default  reduce using rule 31 (switch_statement)
+
+
+State 113
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON . _ID _INC _RPAREN statement
+
+    _ID  shift, and go to state 119
+
+
+State 114
+
+   27 case_: _CASE literal $@4 _COLON . case_body break_statement
+
+    _ID        shift, and go to state 115
+    _LBRACKET  shift, and go to state 28
+
+    case_body             go to state 120
+    compound_statement    go to state 117
+    assignment_statement  go to state 118
+
+
+State 115
+
+   44 assignment_statement: _ID . _ASSIGN num_exp _SEMICOLON
+
+    _ASSIGN  shift, and go to state 55
+
+
+State 116
+
+   21 default_statement: _DEFAULT _COLON case_body .
+
+    $default  reduce using rule 21 (default_statement)
+
+
+State 117
+
+   28 case_body: compound_statement .
+
+    $default  reduce using rule 28 (case_body)
+
+
+State 118
+
+   29 case_body: assignment_statement .
+
+    $default  reduce using rule 29 (case_body)
+
+
+State 119
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID . _INC _RPAREN statement
+
+    _INC  shift, and go to state 121
+
+
+State 120
+
+   27 case_: _CASE literal $@4 _COLON case_body . break_statement
+
+    _BREAK  shift, and go to state 122
+
+    $default  reduce using rule 22 (break_statement)
+
+    break_statement  go to state 123
+
+
+State 121
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC . _RPAREN statement
+
+    _RPAREN  shift, and go to state 124
+
+
+State 122
+
+   23 break_statement: _BREAK . _SEMICOLON
+
+    _SEMICOLON  shift, and go to state 125
+
+
+State 123
+
+   27 case_: _CASE literal $@4 _COLON case_body break_statement .
+
+    $default  reduce using rule 27 (case_)
+
+
+State 124
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN . statement
+
+    _IF        shift, and go to state 25
+    _RETURN    shift, and go to state 26
+    _ID        shift, and go to state 27
+    _LBRACKET  shift, and go to state 28
+    _DO        shift, and go to state 30
+    _FOR       shift, and go to state 31
+    _SWITCH    shift, and go to state 32
+
+    do_statement          go to state 33
+    inc_statement         go to state 34
+    for_statement         go to state 35
+    switch_statement      go to state 36
+    statement             go to state 126
+    compound_statement    go to state 38
+    assignment_statement  go to state 39
+    if_statement          go to state 40
+    if_part               go to state 41
+    return_statement      go to state 42
+
+
+State 125
+
+   23 break_statement: _BREAK _SEMICOLON .
+
+    $default  reduce using rule 23 (break_statement)
+
+
+State 126
+
+   19 for_statement: _FOR _LPAREN _TYPE _ID _ASSIGN literal _SEMICOLON $@3 rel_exp _SEMICOLON _ID _INC _RPAREN statement .
+
+    $default  reduce using rule 19 (for_statement)

@@ -1,0 +1,60 @@
+ /* resenje pojednostavljenog switch-a*/
+%{
+   int switch_id_index = 0;
+   int case_count = 0;
+   int case_array[100];
+%}
+
+...
+
+
+switch_statement    
+  : _SWITCH _LPAREN _ID 
+      {
+        if( (switch_id_index = lookup_symbol($3, VAR)) == -1)
+          err("'%s' undeclared", $3);
+      }
+    _RPAREN _LBRACKET case_statements default_statement _RBRACKET
+      {
+        case_count = 0; //ponisti sadrzaj niza
+      }
+  ;
+
+case_statements
+  : case_statement
+  | case_statements case_statement
+  ;
+
+case_statement
+  : _CASE literal _COLON 
+      {
+        // provera jedinstvenosti konstanti
+        int i = 0;
+        while(i < case_count) {
+          if($2 == case_array[i]) { //ako takva konstanta vec postoji u nizu
+          err("duplicated constant in case");
+          break;
+        }
+       i++;
+      }
+      if(i == case_count) { //ako nije duplikat
+        case_array[case_count] = $2; //ubaci konstantu u niz
+        case_count++;
+      }
+
+      //provera tipa konstante
+      if(!check_types($2, switch_id_index))
+        err("wrong type of constant");
+      }
+    statement break_statement
+  ;
+
+break_statement    
+  : /* empty */
+  | _BREAK _SEMICOLON
+  ;
+
+default_statement
+  : 
+  | _DEFAULT statement
+  ;

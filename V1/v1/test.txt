@@ -1,0 +1,25 @@
+12345
+6
+0
++45645
+-4356
+642642
++1
+0x7A3F
+0X1234
+0xf
+0x123
+0xffce
+2.345
+bReAk
+0.0
+5.
+1
+//test
+23.456
++123.456
+-123.456
+/* proba nekog komenatra 
+test das 
+123 dasdssdd2
+*/

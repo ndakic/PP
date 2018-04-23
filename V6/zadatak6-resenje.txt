@@ -1,0 +1,68 @@
+
+Zadatak1: lokalne promenljive unutar bloka
+
+int block;
+
+variable
+  : type _ID _SEMICOLON
+      {
+        int i = lookup_symbol($2, VAR|PAR);
+        if( (i != -1) && (get_atr2(i) == block) )
+          err("redefinition of '%s'", $2);
+        else {              
+          insert_symbol($2, VAR, $1, ++var_num, block);
+        }
+      }
+  ;
+
+compound_statement
+  : _LBRACKET
+      { 
+        block++; 
+        $<i>$ = get_last_element();
+      } 
+    variable_list statement_list _RBRACKET 
+      {
+        //print_symtab();
+        block--; 
+        clear_symbols($<i>2 + 1);
+      }
+  ;
+
+
+
+Zadatak2: for petlja sa lokalnim iteratorom
+
+int block = 0;
+$<i>$ znaci vrednost akcije $$ koja ima tip int (i)
+
+for_statement
+  : _FOR _LPAREN _TYPE _ID 
+      { 
+        block++;
+        int i = lookup_symbol($4, PAR|VAR);
+        if(i != -1 && get_atr2(i) == block)
+           err("redefinition of variable '%s'", $4);
+        else
+          $<i>$ = insert_symbol($4, VAR, $3, 1, block); 
+      }
+    _ASSIGN literal 
+      {
+        if($3 != get_type($7))
+          err("incompatible types in assignment");
+      } 
+    _SEMICOLON rel_exp _SEMICOLON _ID
+      {
+        $<i>$ = lookup_symbol($12, VAR);
+        if($<i>5 != $<i>$)
+          err("wrong var for increment");
+      }
+    _INC _RPAREN statement
+      {
+        print_symtab();
+        block--;
+        clear_symbols($<i>5);
+      }
+  ;
+
+
