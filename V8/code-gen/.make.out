@@ -1,0 +1,7 @@
+micko.y: In function ‘yyparse’:
+micko.y:291:9: warning: format ‘%s’ expects argument of type ‘char *’, but argument 3 has type ‘int’ [-Wformat=]
+         code("\n\t\t\t%s\t@false%d", get_opjump($2),lab_num);
+         ^
+/tmp/ccAcn4Z1.o: In function `yyparse':
+micko.tab.c:(.text+0x1373): undefined reference to `get_opjump'
+collect2: error: ld returned 1 exit status

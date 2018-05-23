@@ -1,0 +1,41 @@
+%token _FOR
+%token _INC
+
+statement
+  : ...
+  | for_statement
+  ;
+
+for_statement
+  : _FOR _LPAREN _ID _ASSIGN literal
+      {
+        $<i>$ = ++lab_num;
+        int i = lookup_symbol($3, VAR|PAR);
+        if(i == -1)
+          err("nedeklarisno %s", $3);
+        gen_mov($5,i);  //inicijalizacija iteratora, pre pocetka petlje
+        gen_snlab("for", lab_num);    
+      }
+    _SEMICOLON rel_exp
+      {
+        code("\n\t\t\t%s\t@exit%d", get_jump_stmt($8, TRUE), $<i>6);
+      } 
+    _SEMICOLON _ID _INC _RPAREN statement
+      {
+        int i = lookup_symbol($11, VAR|PAR);
+        if(i == -1)
+          err("nedeklarisno %s", $11);
+        //gk za inkrement (na kraju petlje)
+        //resenje = iz v8
+        if(get_type(i) == INT)
+          code("\n\t\t\tADDS\t");
+        else
+          code("\n\t\t\tADDU\t");
+        print_symbol(i);
+        code(",$1,");
+        print_symbol(i);
+
+        code("\n\t\t\tJMP \t@for%d", $<i>6);
+        gen_snlab("exit", $<i>6);
+      }
+  ;

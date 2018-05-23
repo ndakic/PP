@@ -1,0 +1,5 @@
+micko.y: In function ‘yyparse’:
+micko.y:177:20: error: ‘idxx’ undeclared (first use in this function)
+        if(get_type(idxx) != get_type($6))
+                    ^
+micko.y:177:20: note: each undeclared identifier is reported only once for each function it appears in

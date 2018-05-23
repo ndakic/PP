@@ -1,0 +1,66 @@
+Zadatak 1
+
+Prosiriti miniC iskaze for petljom koja izgleda ovako:
+
+  "for" _LPAREN <name> "=" <lit> ";" <rel> ";" <name> "++")
+      <statement>
+
+gde je:
+<name> ime lokalne promenljive ili parametra
+<lit>  literal
+<rel>  relacioni izraz
+"++"   inkrement operator
+
+<name> mora biti deklarisano pre upotrebe
+<name> i <lit> treba da budu istog tipa
+
+Realizovati generisanje koda za for petlju.
+- Inicijalizacija iteratora se vrsi samo jednom,
+  pre prvog izvrsavanja tela petlje.
+
+
+- Tacnost relacije se proverava na pocetku svake iteracije.
+- Inkrementiranje iteratora se vrsi na kraju svake iteracije.
+
+Napomena: Petlje mogu biti i ugnjezdene.
+
+Primer:
+  int suma;
+  int i;
+  suma = 0;
+  for(i = 0; i < 5; i++)
+    suma = suma + i;
+
+
+
+uvecaj i za 1
+ponovo se vrati na for
+
+  for(i = 0; i < 5; i++)
+  	for(j = 0; j < 5; j++)
+    	suma = suma + j;
+
+
+
+			MOV 	$0,-8(%14)
+@for0:
+			CMPS 	-8(%14),$5
+			JGES	@exit0
+			MOV 	$0,-12(%14)
+@for1:
+			CMPS 	-12(%14),$5
+			JGES	@exit1
+			ADDS	-4(%14),-12(%14),%0
+			MOV 	%0,-4(%14)
+			ADDS	-12(%14),$1,-12(%14)
+			JMP		@for1
+@exit1:
+			ADDS	-12(%14),$1,-12(%14)
+			JMP		@for1
+@exit1:
+			MOV 	-4(%14),%13
+			JMP 	@main_exit
+@main_exit:
+			MOV 	%14,%15
+			POP 	%14
+			RET
